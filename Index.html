@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>BMS Chiller Load Dashboard - ELJCC Building</title>
+<meta http-equiv='refresh' content='1'>
+<style>
+:root{--bg:#f0f4f8;--card:#fff;--hdr:#1e4e79;--sub:#2e75b6;--txt:#1a1a2e;--txt2:#4a5568;--bdr:#e2e8f0;--shd:0 2px 12px rgba(0,0,0,0.08);}
+:root{--gnbg:#c6efce;--gntx:#00610a;--rdbg:#ffc7ce;--rdtx:#9c0006;--ambg:#ffeb9c;--amtx:#9c5700;--blbg:#dce6f1;--bltx:#1e4e79;--ofbg:#f2f2f2;--oftx:#a0aec0;--gtrk:#e2e8f0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);}
+.header{background:var(--hdr);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.hl{display:flex;align-items:center;gap:12px;}
+.ht{font-size:16px;font-weight:700;}
+.hs{font-size:11px;opacity:0.75;margin-top:2px;}
+.hr{text-align:right;}
+.ct{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:1px;}
+.cd{font-size:11px;opacity:0.75;}
+.sbar{background:var(--sub);padding:6px 24px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.85);flex-wrap:wrap;gap:6px;}
+.si{display:flex;align-items:center;gap:6px;}
+.dot{width:8px;height:8px;border-radius:50%;background:#68d391;}
+.main{padding:20px 24px;max-width:1600px;margin:0 auto;}
+.sl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--txt2);margin-bottom:12px;margin-top:20px;display:flex;align-items:center;gap:8px;}
+.sl::after{content:'';flex:1;height:1px;background:var(--bdr);}
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.cc{background:var(--card);border-radius:24px;padding:24px 20px 20px;box-shadow:var(--shd);border:1px solid var(--bdr);display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;}
+.cc::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;border-radius:24px 24px 0 0;}
+.chiller-on::before{background:linear-gradient(90deg,#48bb78,#38a169);}
+.chiller-warn::before{background:linear-gradient(90deg,#f6ad55,#dd6b20);}
+.chiller-over::before{background:linear-gradient(90deg,#fc8181,#e53e3e);}
+.chiller-off::before{background:var(--gtrk);}
+.cnr{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:20px;}
+.cn{font-size:15px;font-weight:700;}
+.cb{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-on{background:var(--gnbg);color:var(--gntx);}
+.badge-off{background:var(--ofbg);color:var(--oftx);}
+.gw{position:relative;width:190px;height:190px;margin:0 auto 12px;}
+.gs{width:190px;height:190px;transform:rotate(-220deg);overflow:visible;}
+.gt{fill:none;stroke:var(--gtrk);stroke-width:16;stroke-linecap:round;stroke-dasharray:339.29 452.39;}
+.gf{fill:none;stroke-width:16;stroke-linecap:round;stroke-dasharray:339.29 452.39;}
+.gg{fill:none;stroke-width:24;stroke-linecap:round;stroke-dasharray:339.29 452.39;opacity:0.12;}
+.gc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.gv{font-size:30px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;}
+.gu{font-size:12px;color:var(--txt2);}
+.gp{font-size:14px;font-weight:700;margin-top:2px;}
+.cdb{display:inline-block;padding:4px 14px;border-radius:14px;font-size:11px;font-weight:700;margin-bottom:14px;}
+.condition-normal{background:var(--gnbg);color:var(--gntx);}
+.condition-warning{background:var(--ambg);color:var(--amtx);}
+.condition-overload{background:var(--rdbg);color:var(--rdtx);}
+.condition-offline{background:var(--ofbg);color:var(--oftx);}
+.cdr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:100%;padding-top:14px;border-top:1px solid var(--bdr);}
+.cdv{font-size:13px;font-weight:700;}
+.cdl{font-size:9px;color:var(--txt2);text-transform:uppercase;margin-top:2px;}
+.lg{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:16px;}
+.lm{background:var(--hdr);color:#fff;border-radius:16px;padding:20px;box-shadow:var(--shd);display:flex;flex-direction:column;justify-content:space-between;}
+.lt{font-size:11px;opacity:0.75;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.lv{font-size:42px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;margin-bottom:4px;}
+.ls{font-size:13px;opacity:0.75;margin-bottom:16px;}
+.lp{background:rgba(255,255,255,0.2);border-radius:8px;height:8px;overflow:hidden;}
+.lpf{height:100%;border-radius:8px;}
+.lpt{font-size:11px;opacity:0.75;margin-top:6px;}
+.mc{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shd);border:1px solid var(--bdr);display:flex;flex-direction:column;justify-content:space-between;}
+.mi{font-size:20px;margin-bottom:8px;}
+.mtl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--txt2);margin-bottom:6px;}
+.mv{font-size:24px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;}
+.mu{font-size:12px;color:var(--txt2);}
+.cs2{font-size:11px;color:var(--txt2);}
+.chc{background:var(--card);border-radius:16px;padding:20px;box-shadow:var(--shd);border:1px solid var(--bdr);}
+.chh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.cht{font-size:13px;font-weight:700;}
+.cha{height:200px;background:#f8fafc;border-radius:8px;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:16px 8px 32px 40px;gap:4px;border:1px solid var(--bdr);}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;gap:4px;}
+.chart-bar{width:100%;min-height:2px;}
+.chart-label{font-size:9px;color:var(--txt2);text-align:center;}
+.cyl{position:absolute;left:4px;top:16px;bottom:32px;display:flex;flex-direction:column;justify-content:space-between;font-size:9px;color:var(--txt2);}
+.wl{position:absolute;left:40px;right:8px;border-top:2px dashed rgba(252,129,129,0.7);z-index:2;}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.sc{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shd);border:1px solid var(--bdr);border-left:4px solid;}
+.sc1{border-left-color:#4299e1;}.sc2{border-left-color:#48bb78;}.sc3{border-left-color:#9f7aea;}
+.asc{background:var(--blbg);}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sn{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.st{font-size:10px;color:var(--txt2);}
+.sl2{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;margin-bottom:4px;}
+.ss{font-size:11px;color:var(--txt2);margin-bottom:10px;}
+.sst{display:flex;gap:12px;font-size:11px;color:var(--txt2);flex-wrap:wrap;}
+.sumg{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.sumc{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shd);border:1px solid var(--bdr);text-align:center;}
+.sumi{font-size:24px;margin-bottom:8px;}
+.sumv{font-size:22px;font-weight:800;margin-bottom:4px;font-variant-numeric:tabular-nums;}
+.suml{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--txt2);}
+.footer{text-align:center;padding:20px;font-size:11px;color:var(--txt2);border-top:1px solid var(--bdr);margin-top:24px;}
+.text-green{color:var(--gntx);}.text-red{color:var(--rdtx);}.text-amber{color:var(--amtx);}.text-blue{color:var(--bltx);}.text-offline{color:var(--oftx);}
+.upd{background:#1a3d1f;color:#68d391;padding:6px 24px;font-size:11px;display:flex;align-items:center;gap:8px;}
+@media(max-width:1100px){.lg{grid-template-columns:2fr 1fr 1fr;}.sumg{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:860px){.cg{grid-template-columns:1fr;}.lg{grid-template-columns:1fr 1fr;}.sg{grid-template-columns:1fr;}}
+@media(max-width:600px){.main{padding:12px 14px;}.lg{grid-template-columns:1fr;}.sumg{grid-template-columns:repeat(2,1fr);}.ht{font-size:13px;}.ct{font-size:17px;}.gw{width:160px;height:160px;}.gs{width:160px;height:160px;}}
+.header-right{display:flex;align-items:center;gap:20px;}
+.clock-display{text-align:right;}
+.clock-time{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:1px;color:#fff;}
+.clock-date{font-size:11px;opacity:0.75;color:#fff;}
+.theme-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.theme-label{font-size:11px;opacity:0.8;color:rgba(255,255,255,0.85);white-space:nowrap;}
+.toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0;}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+.toggle-slider{position:absolute;inset:0;background:#4a5568;border-radius:24px;cursor:pointer;transition:0.3s;}
+.toggle-slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:0.3s;box-shadow:0 1px 3px rgba(0,0,0,0.3);}
+input:checked + .toggle-slider{background:#4299e1;}
+input:checked + .toggle-slider:before{transform:translateX(20px);}
+[data-theme='dark']{--bg:#0f1117;--card:#1a1d2e;--hdr:#0d2137;--sub:#1a3a5c;--txt:#e2e8f0;--txt2:#a0aec0;--bdr:#2d3748;--shd:0 2px 12px rgba(0,0,0,0.4);}
+[data-theme='dark']{--gnbg:#1a3d1f;--gntx:#68d391;--rdbg:#3d1a1a;--rdtx:#fc8181;--ambg:#3d3000;--amtx:#f6e05e;--blbg:#1a2d3d;--bltx:#90cdf4;--ofbg:#1a1d2e;--oftx:#4a5568;--gtrk:#2d3748;}
+body{transition:background 0.3s,color 0.3s;}
+body.dark .cyl{color:#718096;}
+</style></head><body>
+<header class='header'>
+<div class='hl'><span style='font-size:22px'>&#9889;</span><div><div class='ht'>ELJCC BUILDING &#8212; BMS CHILLER LOAD DASHBOARD</div><div class='hs'>Building Management System | Real-Time Monitoring</div></div></div>
+<div class='header-right'><div class='theme-toggle' onclick='toggleTheme()'><span class='theme-label'>&#9790;</span><label class='toggle-switch'><input type='checkbox' id='themeToggle'><span class='toggle-slider'></span></label><span class='theme-label'>&#9728;</span></div><div class='clock-display'><div class='clock-time'>21:16:27</div><div class='clock-date'>Wednesday, May 20 2026</div></div></div>
+</header>
+<div class='sbar'><div style='display:flex;align-items:center;gap:20px;flex-wrap:wrap;'>
+<div class='si'><div class='dot'></div><span>Last updated: 21:16:27 &#8212; Auto refresh every 1s</span></div>
+<div class='si'>&#128205; ELJCC Building &#8212; Chiller Plant</div>
+<div class='si'>Current Shift: <strong>2ND SHIFT</strong></div>
+</div>
+<div style='font-size:10px;color:rgba(255,255,255,0.8);'>Fixed Load (24/7): <strong>678.69 TR</strong> &nbsp;|&nbsp; Chiller Capacity: <strong>750 TR each</strong> &nbsp;|&nbsp; Normal &lt;80% &nbsp; Warning 80&#8211;94% &nbsp; Overload &#8805;95%</div>
+</div>
+<main class='main'>
+<div class='sl'>&#9881;&#65039; Chiller Plant Status</div>
+<div class='cg'>
+<div class='cc chiller-on'><div class='cnr'><div class='cn'>&#127777; Chiller 3</div><div class='cb badge-on'>&#9679; ON</div></div><div class='gw'><svg class='gs' viewBox='0 0 190 190'><circle class='gg' cx='95' cy='95' r='72' stroke='#48bb78' stroke-dashoffset='165.49'/><circle class='gt' cx='95' cy='95' r='72'/><circle class='gf' cx='95' cy='95' r='72' stroke='#48bb78' stroke-dashoffset='165.49'/></svg><div class='gc'><div style='font-size:18px;margin-bottom:4px;'>&#10052;&#65039;</div><div class='gv text-green'>384.2</div><div class='gu'>TR load</div><div class='gp text-green'>51.2%</div></div></div><div class='cdb condition-normal'>NORMAL</div><div class='cdr'><div><div class='cdv'>750 TR</div><div class='cdl'>Capacity</div></div><div><div class='cdv text-green'>51.2%</div><div class='cdl'>Load %</div></div><div><div class='cdv text-green'>ON</div><div class='cdl'>Status</div></div></div></div>
+<div class='cc chiller-on'><div class='cnr'><div class='cn'>&#127777; Chiller 4</div><div class='cb badge-on'>&#9679; ON</div></div><div class='gw'><svg class='gs' viewBox='0 0 190 190'><circle class='gg' cx='95' cy='95' r='72' stroke='#48bb78' stroke-dashoffset='165.49'/><circle class='gt' cx='95' cy='95' r='72'/><circle class='gf' cx='95' cy='95' r='72' stroke='#48bb78' stroke-dashoffset='165.49'/></svg><div class='gc'><div style='font-size:18px;margin-bottom:4px;'>&#10052;&#65039;</div><div class='gv text-green'>384.2</div><div class='gu'>TR load</div><div class='gp text-green'>51.2%</div></div></div><div class='cdb condition-normal'>NORMAL</div><div class='cdr'><div><div class='cdv'>750 TR</div><div class='cdl'>Capacity</div></div><div><div class='cdv text-green'>51.2%</div><div class='cdl'>Load %</div></div><div><div class='cdv text-green'>ON</div><div class='cdl'>Status</div></div></div></div>
+<div class='cc chiller-off'><div class='cnr'><div class='cn'>&#127777; Chiller 5</div><div class='cb badge-off'>&#9679; OFFLINE</div></div><div class='gw'><svg class='gs' viewBox='0 0 190 190'><circle class='gg' cx='95' cy='95' r='72' stroke='#a0aec0' stroke-dashoffset='339.29'/><circle class='gt' cx='95' cy='95' r='72'/><circle class='gf' cx='95' cy='95' r='72' stroke='#a0aec0' stroke-dashoffset='339.29'/></svg><div class='gc'><div style='font-size:18px;margin-bottom:4px;'>&#10052;&#65039;</div><div class='gv text-offline'> </div><div class='gu'>TR load</div><div class='gp text-offline'> </div></div></div><div class='cdb condition-offline'>OFFLINE</div><div class='cdr'><div><div class='cdv'>750 TR</div><div class='cdl'>Capacity</div></div><div><div class='cdv text-offline'> </div><div class='cdl'>Load %</div></div><div><div class='cdv text-offline'>OFF</div><div class='cdl'>Status</div></div></div></div>
+</div>
+<div class='sl'>&#128202; Building Load Summary</div>
+<div class='lg'>
+<div class='lm'><div><div class='lt'>Total Chiller Load</div><div class='lv'>768.35</div><div class='ls'>of 1500 TR total capacity</div></div><div><div class='lp'><div class='lpf' style='width:51.2%;background:#68d391;'></div></div><div class='lpt'>51.2% overall load &#8212; 2 chiller(s) active</div></div></div>
+<div class='mc'><div class='mi'>&#128274;</div><div class='mtl'>Fixed Load (24/7)</div><div class='mv' style='color:var(--bltx);'>678.69 <span class='mu'>TR</span></div><div class='cs2' style='margin-top:4px;font-size:10px;'>Always-on base load</div></div>
+<div class='mc'><div class='mi'>&#9889;</div><div class='mtl'>Variable Load</div><div class='mv' style='color:var(--gntx);'>89.66 <span class='mu'>TR</span></div><div class='cs2' style='margin-top:4px;font-size:10px;'>Active FCU/AHU units</div></div>
+<div class='mc'><div class='mi'>&#10052;&#65039;</div><div class='mtl'>Active FCU</div><div class='mv' style='color:var(--bltx);'>20 <span class='mu'>units</span></div><div class='cs2' style='margin-top:4px;font-size:10px;'>Fan Coil Units ON</div></div>
+<div class='mc'><div class='mi'>&#127787;&#65039;</div><div class='mtl'>Active AHU</div><div class='mv' style='color:var(--bltx);'>2 <span class='mu'>units</span></div><div class='cs2' style='margin-top:4px;font-size:10px;'>Air Handling Units ON</div></div>
+</div>
+<div class='sl'>&#128200; Today's Hourly Load Trend</div>
+<div class='chc'><div class='chh'><div class='cht'>Chiller Load (TR) &#8212; Wednesday, May 20 2026</div>
+<div style='display:flex;gap:16px;font-size:11px;color:var(--txt2);'><div style='display:flex;align-items:center;gap:6px;'><div style='width:10px;height:10px;border-radius:50%;background:#4299e1;'></div><span>Chiller Load</span></div>
+<div style='display:flex;align-items:center;gap:6px;'><div style='width:18px;height:2px;border-top:2px dashed #fc8181;'></div><span>Warning (80%)</span></div></div></div>
+<div class='cha'><div class='cyl'><span>1500</span><span>1200</span><span>900</span><span>600</span><span>300</span><span>0</span></div><div class='wl' style='bottom:calc(32px + 80% * (100% - 48px) / 100);'></div><div class='chart-bar-wrap'><div class='chart-bar' style='height:48.0%;background:#4299e1;border-radius:4px 4px 0 0;' title='08:00   720.35 TR'></div><div class='chart-label'>08</div></div><div class='chart-bar-wrap'><div class='chart-bar' style='height:57.1%;background:#4299e1;border-radius:4px 4px 0 0;' title='09:00   856.95 TR'></div><div class='chart-label'>09</div></div><div class='chart-bar-wrap'><div class='chart-bar' style='height:57.1%;background:#4299e1;border-radius:4px 4px 0 0;' title='10:00   856.95 TR'></div><div class='chart-label'>10</div></div><div class='chart-bar-wrap'><div class='chart-bar' style='height:57.1%;background:#4299e1;border-radius:4px 4px 0 0;' title='11:00   856.95 TR'></div><div class='chart-label'>11</div></div><div class='chart-bar-wrap'><div class='chart-bar' style='height:46.8%;background:#4299e1;border-radius:4px 4px 0 0;' title='12:00   702.69 TR'></div><div class='chart-label'>12</div></div><div class='chart-bar-wrap'><div class='chart-bar' style='height:46.8%;background:#4299e1;border-radius:4px 4px 0 0;' title='13:00   702.69 TR'></div><div class='chart-label'>13</div></div><div class='chart-bar-wrap'><div class='chart-bar' style='height:46.8%;background:#4299e1;border-radius:4px 4px 0 0;' title='14:00   702.69 TR'></div><div class='chart-label'>14</div></div><div class='chart-bar-wrap'><div class='chart-bar' style='height:49.6%;background:#4299e1;border-radius:4px 4px 0 0;' title='15:00   744.35 TR'></div><div class='chart-label'>15</div></div><div class='chart-bar-wrap'><div class='chart-bar' style='height:45.2%;background:#4299e1;border-radius:4px 4px 0 0;' title='17:00   678.69 TR'></div><div class='chart-label'>17</div></div><div class='chart-bar-wrap'><div class='chart-bar' style='height:51.2%;background:#4299e1;border-radius:4px 4px 0 0;' title='18:00   768.35 TR'></div><div class='chart-label'>18</div></div></div></div>
+<div class='sl'>&#128336; Shift Load Summary</div>
+<div class='sg'>
+<div class='sc sc1'><div class='sh'><div class='sn'>1st Shift</div><div class='st'>06:00 &#8212; 13:59</div></div><div class='sl2 text-offline'>&#8212; <span style='font-size:14px;font-weight:400'>TR</span></div><div class='ss'>No data yet</div><div class='cdb condition-offline' style='margin-bottom:10px;'>PENDING</div><div class='sst'>&#10052;&#65039; &#8212; FCU</span><span>&#127787;&#65039; &#8212; AHU</span><span>&#9881;&#65039; &#8212; Chillers</div></div>
+<div class='sc sc2 asc'><div class='sh'><div class='sn'>2nd Shift</div><div class='st'>14:00 &#8212; 21:59</div></div><div class='sl2 text-green'>768.35 <span style='font-size:14px;font-weight:400'>TR</span></div><div class='ss'>51.2% of 1500 TR</div><div class='cdb condition-normal' style='margin-bottom:10px;'>NORMAL</div><div class='sst'>&#10052;&#65039; 20 FCU</span><span>&#127787;&#65039; 2 AHU</span><span>&#9881;&#65039; 2 Chillers</div></div>
+<div class='sc sc3'><div class='sh'><div class='sn'>3rd Shift</div><div class='st'>22:00 &#8212; 05:59</div></div><div class='sl2 text-offline'>&#8212; <span style='font-size:14px;font-weight:400'>TR</span></div><div class='ss'>No data yet</div><div class='cdb condition-offline' style='margin-bottom:10px;'>PENDING</div><div class='sst'>&#10052;&#65039; &#8212; FCU</span><span>&#127787;&#65039; &#8212; AHU</span><span>&#9881;&#65039; &#8212; Chillers</div></div>
+</div>
+<div class='sl'>&#127942; Daily Summary</div>
+<div class='sumg'>
+<div class='sumc'><div class='sumi'>&#128200;</div><div class='sumv text-red'>856.95 TR</div><div class='suml'>Peak Load Today</div><div class='cs2' style='margin-top:6px;font-size:10px;'>@ 09:00</div></div>
+<div class='sumc'><div class='sumi'>&#128201;</div><div class='sumv text-green'>678.69 TR</div><div class='suml'>Minimum Load</div><div class='cs2' style='margin-top:6px;font-size:10px;'>Today's lowest recorded</div></div>
+<div class='sumc'><div class='sumi'>&#9889;</div><div class='sumv text-blue'>768.35 TR</div><div class='suml'>Current Load</div><div class='cs2' style='margin-top:6px;font-size:10px;'>51.2% of capacity</div></div>
+<div class='sumc'><div class='sumi'>&#9989;</div><div class='sumv text-green'>NORMAL</div><div class='suml'>Overall Condition</div><div class='cs2' style='margin-top:6px;font-size:10px;'>CH-3 CH-4  active</div></div>
+</div>
+</main>
+<footer class='footer'>BMS Chiller Load Dashboard &#8212; ELJCC Building &nbsp;|&nbsp; Version 3.0 &nbsp;|&nbsp; ABS-CBN Building Management System &nbsp;|&nbsp; Generated: 2026-05-20 21:16:27</footer>
+<script>
+const themeToggle = document.getElementById('themeToggle');
+if(localStorage.getItem('bms-theme') === 'dark'){
+  document.documentElement.setAttribute('data-theme','dark');
+  themeToggle.checked = true;}
+function toggleTheme(){
+  const isDark = themeToggle.checked;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  localStorage.setItem('bms-theme', isDark ? 'dark' : 'light');}
+</script>
+</body></html>
